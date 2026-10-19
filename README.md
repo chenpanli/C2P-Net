@@ -1,15 +1,14 @@
-# C2P-Net: Zweistufige nicht-starre Punktwolkenregistrierung für die Mittelohrdiagnostik
+# C2P-Net: Two-Stage Non-Rigid Point Cloud Registration for Middle Ear Diagnostics
 
- ## Installation
- Alle benötigten Packages sind in requirements.txt aufgeführt. <br>
- Außerdem müssen die Installationsanweisungen der sub-repositorys [NgeNet](https://github.com/zhulf0804/NgeNet), [RegTR](https://github.com/yewzijian/RegTR) und [Neural Deformation Pyramid](https://github.com/rabbityl/DeformationPyramid) befolgt werden.
+## Installation
+All required packages are listed in requirements.txt. <br>
+You also need to follow the installation instructions of the sub-repositories [NgeNet](https://github.com/zhulf0804/NgeNet), [RegTR](https://github.com/yewzijian/RegTR) and [Neural Deformation Pyramid](https://github.com/rabbityl/DeformationPyramid).
 
- ## Datenset
- Zum Training und Testen ist eine Datenset notwendig, 
- welches unter mesh_dataset/ear_dataset bereitgestellt werden muss.
+## Dataset
+Training and testing require a dataset, which must be placed under mesh_dataset/ear_dataset.
 
 ```text
- mesh_dataset\
+mesh_dataset\
 │
 ├── ear_dataset\
 │   ├── 000000\
@@ -27,56 +26,53 @@
         └── pre_surface_with_displ.vtp
 ```
 
-Die Dateien *pre_surface_with_displ.vtp* enthalten das source modell, das in Punkten und Verbindungen zwischen diesen dargestellt wird, <br>
-und das displacement field (Vektor für jeden Punkt, Transformation von source zu target).
-Die Datein *intra_surface.stl* enthält die target 3D-Modelle.
+Each *pre_surface_with_displ.vtp* file contains the source model, represented as points and the connections between them, <br>
+together with the displacement field (one vector per point, describing the transformation from source to target).
+Each *intra_surface.stl* file contains the target 3D model.
 
-Danach müssen die Daten in einer Pickle-Datei gecached werden.<br>
-Dazu einfach diese zwei Zeilen ausführen:<br>
+Next, cache the data in a pickle file by running these two lines:<br>
 
     cd mesh_dataset
-    pathon ear_dataset_setup.py
+    python ear_dataset_setup.py
 
-Das Skript erstellt dabei auch automatisch einen Train-Val-Test (80%, 15%, 5%) Split für das Datenset.
-Leider ist es zurzeit nicht möglich, diesen Datensatz bereitzustellen, weil zunächst rechtliche Angelegenheiten mit dem Institut geklärt werden müssen.
+The script also creates a train/val/test split (80%, 15%, 5%) of the dataset.
+Unfortunately, the dataset cannot be made available yet, because legal matters with the institute still need to be resolved.
 
 ## Training
-Zum Trainieren von *NgeNet*:<br>
+To train *NgeNet*:<br>
 
     python trainNgeNet.py
 
-Das Ergebnis ist unter *trainResults/eardataset_nonrigid_randSurface_perm* zu finden. <br>
+The results are saved under *trainResults/eardataset_nonrigid_randSurface_perm*. <br>
 
-Zum Trainieren von *RegTR*:<br>
+To train *RegTR*:<br>
 
     python trainRegTR.py
 
-Außerdem kann TensorBoard mit diesen Daten die Loss Curve usw. visualisieren. Die weights sind im Unterordner */checkpoints* zu finden.
+You can use TensorBoard to visualize the loss curves and other metrics from this data. The weights are stored in the */checkpoints* subfolder.
 
-## Testen
-Zum Testen der Methode dieses Skript ausführen:
+## Testing
+To test the method, run:
 
     python test_pipeline.py
 
-Das Skript wird als Ausgabe unter anderem die Chamfer Distance des Ergebnisses und die wall time ausgeben.<br>
-Die Ergebnisse werden als STL-Dateien im *test_output_folder* gespeichert. Außerdem finden sich dort andere Ausgaben, die für das Erstellen der Animationen benötigt werden.<br>
+Among other outputs, the script prints the Chamfer distance of the result and the wall time.<br>
+The results are saved as STL files in *test_output_folder*, along with other outputs needed to create the animations.<br>
 
-Zum Erstellen eines Graphen, der zeigt, wie genau die Ergebnisse der Methode sind verglichen zu der Menge an Punkten in target, muss folgender Befehl ausgeführt werden:
+To plot how the method's accuracy depends on the number of points in the target, run:
 
-    python surfaceamount_test.py 
+    python surfaceamount_test.py
 
-## Bilder/Animation erstellen
+## Creating Images and Animations
 
-Für das Erstellen der Bilder in der Präsentation folgendes Skript genutzt:
+The images in the presentation were created with this script:
 
     python make_animations.py [TEST_INDEX]
 
-Über den TEST_INDEX kann das Testsample ausgewählt werden. Der maximale Index ist die Anzahl an Testsamples -1.
+TEST_INDEX selects the test sample. The maximum index is the number of test samples minus 1.
 
-Alle in der BeLL und in der Schriftlichen Dokumentation genutzten Diagramme und Bilder sind unter figures/ zu finden.
+All diagrams and images used in the BeLL and the written documentation are in figures/.
 
-
-
-### Danksagung
-Ich danke **Liu Peng vom NCT Dresden** und **Steffen Oßmann vom ERCD Dresden** für das Bereitstellen des Datensets. <br>
-Außerdem danke ich den Erstellern von [NgeNet](https://github.com/zhulf0804/NgeNet), [RegTR](https://github.com/yewzijian/RegTR) und [Neural Deformation Pyramid](https://github.com/rabbityl/DeformationPyramid).
+### Acknowledgements
+I thank **Liu Peng from NCT Dresden** and **Steffen Oßmann from ERCD Dresden** for providing the dataset. <br>
+I also thank the authors of [NgeNet](https://github.com/zhulf0804/NgeNet), [RegTR](https://github.com/yewzijian/RegTR) and [Neural Deformation Pyramid](https://github.com/rabbityl/DeformationPyramid).
